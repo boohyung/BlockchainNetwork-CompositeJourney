@@ -209,7 +209,7 @@ Commodity Trading
 }
 ```
 
-왼쪽 하단에 있는 `Submit Transaction` 버튼을 클릭하고 `Trade` 트랜잭션을 제출하여 Commodity의 소유주를 `commodityA`로 변경합니다:
+왼쪽 하단에 있는 `Submit Transaction` 버튼을 클릭하고 `Trade` 트랜잭션을 제출하여 Commodity의 소유주를 `traderB`로 변경합니다:
 
 ```
 {
