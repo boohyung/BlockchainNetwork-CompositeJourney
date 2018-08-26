@@ -80,6 +80,9 @@ PeerAdmin ID 카드는 로컬 하이퍼레저 패브릭을 관리하는데 사�
 * 비즈니스 네트워크 관리자용 ID카드의 생성, 발급 및 해지하기 
 
 먼저 다음 명령어로 이 저장소를 복제해 저장하고 프로젝트 폴더에 들어갑니다.
+```bash
+git clone https://github.com/IBM/BlockchainNetwork-CompositeJourney.git
+```
 
 그리고 다음 명령어로 패브릭을 시작하고 사용하여 컴포저 프로파일을 만듭니다:
 ```bash
