@@ -81,6 +81,7 @@ PeerAdmin ID 카드는 로컬 하이퍼레저 패브릭을 관리하는데 사�
 
 먼저 다음 명령어로 이 저장소를 복제해 저장하고 프로젝트 폴더에 들어갑니다.
 ```bash
+cd ~/workspace
 git clone https://github.com/jgkong/BlockchainNetwork-CompositeJourney.git
 cd BlockchainNetwork-CompositeJourney
 git checkout global-citizen
