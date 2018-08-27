@@ -21,7 +21,7 @@ else
 fi
 # need to get the certificate 
 
-cat << EOF > /tmp/.connection.json
+cat << EOF > connection.json
 {
     "name": "hlfv1",
     "x-type": "hlfv1",
@@ -92,16 +92,16 @@ else
     CARDOUTPUT=PeerAdmin@hlfv1.card
 fi
 
-composer card create -p /tmp/.connection.json -u PeerAdmin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin --file $CARDOUTPUT
+composer card create -p connection.json -u admin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin -r ChannelAdmin --file $CARDOUTPUT
 #composer card create -p /tmp/.connection.json -u PeerAdmin -c "${CERT}" -k "${PRIVATE_KEY}" -r PeerAdmin --file /tmp/PeerAdmin@hlfv1.card
 
 
 if [ "${NOIMPORT}" != "true" ]; then
-    if composer card list -c PeerAdmin@hlfv1 > /dev/null; then
-        composer card delete --card PeerAdmin@hlfv1
+    if composer card list -c adminCard > /dev/null; then
+        composer card delete --card adminCard
     fi
 
-    composer card import --file /tmp/PeerAdmin@hlfv1.card 
+    composer card import --file /tmp/PeerAdmin@hlfv1.card -c adminCard
     composer card list
     echo "Hyperledger Composer PeerAdmin card has been imported"
     rm /tmp/PeerAdmin@hlfv1.card
@@ -118,7 +118,7 @@ fi
 
 
 
-rm -rf /tmp/.connection.json
+#rm -rf /tmp/.connection.json
 
 #echo "Hyperledger Composer PeerAdmin card has been imported"
 #composer card list

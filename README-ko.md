@@ -81,8 +81,9 @@ PeerAdmin ID 카드는 로컬 하이퍼레저 패브릭을 관리하는데 사�
 
 먼저 다음 명령어로 이 저장소를 복제해 저장하고 프로젝트 폴더에 들어갑니다.
 ```bash
-git clone https://github.com/IBM/BlockchainNetwork-CompositeJourney.git
+git clone https://github.com/jgkong/BlockchainNetwork-CompositeJourney.git
 cd BlockchainNetwork-CompositeJourney
+git checkout global-citizen
 ```
 
 그리고 다음 명령어로 패브릭을 시작하고 사용하여 컴포저 프로파일을 만듭니다:
@@ -98,210 +99,16 @@ cd BlockchainNetwork-CompositeJourney
 ./teardownFabric.sh
 ```
 
-## 3. Business Network Archive (BNA) 생성하기
+## 3. Global Citizen 네트워크 준비하기
 
-이 비즈니스 네트워크는 다음을 정의합니다:
-
-**참가자**
-`Trader`
-
-**자산**
-`Commodity`
-
-**트랜잭션**
-`Trade`
-
-`Commodity`는 `Trader`가 소유하고, `Commodity`의 소유주는 `Trade` 트랜젝션을 제출하여 수정할 수 있습니다.
-
-다음 단계는 비즈니스 네트워크 정의를 위한 BNA (Business Network Archive) 파일을 생성하는 것입니다. BNA 파일은 배포 가능한 유닛으로, 실행을 위해 컴포저 런타임에 배포할 수 있는 파일입니다.
-
-네트워크 아카이브를 생성하려면 다음의 명령을 사용합니다:
-```bash
-npm install
-```
-다음의 결과를 확인할 수 있습니다:
-```bash
-Creating Business Network Archive
-
-Looking for package.json of Business Network Definition
-	Input directory: /Users/ishan/Documents/git-demo/BlockchainNetwork-CompositeJourney
-
-Found:
-	Description: Sample Trade Network
-	Name: my-network
-	Identifier: my-network@0.0.1
-
-Written Business Network Definition Archive file to
-	Output file: ./dist/my-network.bna
-
-Command succeeded
-```
-
-`composer archive create` 명령은 `dist` 폴더에 `my-network.bna`라는 파일을 생성합니다.
-
-Node.js 프로세스에서 '블록체인' 인메모리 상태를 저장하는 임베디드 런타임에 대해 설계한 비즈니스 네트워크를 테스트할 수 있습니다. 이 임베디드 런타임은 전체 패브릭을 구성하는 대신 비즈니스 로직 테스트에 집중할 수 있으므로 단위 테스트에 매우 유용합니다. 
-
-프로젝트 작업 디렉토리 (`BlockchainNetwork-CompositeJourney`)에서 다음 명령을 실행하십시오:
-```
-npm test
-```
-
-다음 결과를 확인할 수 있습니다:
-```bash
-> my-network@0.0.1 test /Users/laurabennett/2017-NewRole/Code/BlockchainNetwork-CompositeJourney
-> mocha --recursive
-
-Commodity Trading
-    #tradeCommodity
-      ✓ should be able to trade a commodity (198ms)
-
-
-  1 passing (1s)
-```
-
-## 4. 컴포저 플레이그라운드를 사용하여 Business Network Archive 배포하기
-
-[컴포저 플레이그라운드](http://composer-playground.mybluemix.net/)를 열면,자동으로 기본 샘플 네트워크를 가져옵니다. 이전에 플레이그라운드를 사용한 적이 있는 경우, 브라우저 콘솔에서 `localStorage.clear()`를 실행하여 브라우저 로컬 저장소를 지우십시오.
-
-
-이제 배포 버튼을 클릭하여 `my-network.bna`파일을 가져오기 합니다. 만약 어떻게 가져오는지를 모르신다면, [컴포저 플레이그라운드 둘러보기](https://www.youtube.com/watch?time_continue=29&v=JQMh_DQ6wXc)를 한 번 보십시오. 
-
->[컴포저 플레이그라운드를 로컬에서](https://hyperledger.github.io/composer/latest/installing/development-tools.html) 설정할 수도 있습니다.
-
-다음이 표시됩니다:
-<p align="center">
-  <img width="400" height="200" src="images/ComposerPlayground.jpg">
-</p>
-
-비즈니스 네트워크 정의를 테스트하려면, **Test** 탭을 클릭합니다:
-
-`Create New Participant` 버튼을 클릭합니다
-<p align="center">
-  <img width="200" height="100" src="images/createparticipantbtn.png">
-</p>
-
-
-`Trader` 참여자를 생성합니다:
-
-```
-{
-  "$class": "org.acme.mynetwork.Trader",
-  "tradeId": "traderA",
-  "firstName": "Tobias",
-  "lastName": "Funke"
-}
-```
-```
-{
-  "$class": "org.acme.mynetwork.Trader",
-  "tradeId": "traderB",
-  "firstName": "Simon",
-  "lastName": "Stone"
-}
-```
-
-가장 왼쪽에 있는 `Commodity` 탭을 하이라이트하고
-`traderA`를 소유주로 하여 `Commodity` 자산을 생성합니다:
-```
-{
-  "$class": "org.acme.mynetwork.Commodity",
-  "tradingSymbol": "commodityA",
-  "description": "Sample Commodity",
-  "mainExchange": "Dollar",
-  "quantity": 100,
-  "owner": "resource:org.acme.mynetwork.Trader#traderA"
-}
-```
-
-왼쪽 하단에 있는 `Submit Transaction` 버튼을 클릭하고 `Trade` 트랜잭션을 제출하여 Commodity의 소유주를 `traderB`로 변경합니다:
-
-```
-{
-  "$class": "org.acme.mynetwork.Trade",
-  "commodity": "resource:org.acme.mynetwork.Commodity#commodityA",
-  "newOwner": "resource:org.acme.mynetwork.Trader#traderB"
-}
-```
-
-`Commodity` 레지스트리를 클릭하여 새 소유주를 확인할 수 있습니다. 또한 `All Transactions` 레지스트리를 선택하여 모든 트랜잭션을 볼 수 있습니다.
-
-트랜잭션 뷰의 예:
-
-<p align="center">
-  <img width="400" height="200" src="images/transactionsview.png">
-</p>
-
-## 5. 로컬에 있는 하이퍼레저 컴포저에 Business Network Archive 배포하기 (대체 설치 방안)
-
-하이퍼레저 패브릭에 비즈니스 네트워크를 배포하려면 하이퍼레저 컴포저를 통해 생성한 비즈니스 네트워크 아카이브 (`.bna`)를 피어로 배포해야 하며, 비즈니스 네트워크 관리자가 되려면 새 참가자, ID 및 이와 연관된 카드를 만들어야 합니다. 마지막으로, 네트워크 관리자 비즈니스 네트워크 카드를 사용하려면 생성한 카드 정보를 가져오기(import) 기능을 통해 가져와야 합니다. 그 이후에 네트워크가 정상적으로 응답하는지 확인하기 위해 핑(ping) 할 수 있습니다.
-
-디렉토리를 `my-network.bna` 파일이 들어있는 `dist` 폴더로 변경합니다.
-
-`composer network install` 명령을 사용하려면 PeerAdmin 비즈니스 네트워크 카드 (이 경우 하나는 미리 만들어져 가져오기 되었습니다)와 비즈니스 네트워크의 이름이 필요합니다. 컴포저 네트워크를 설치하려면 다음 명령을 실행하십시오:
-```
-cd dist
-composer network install --card PeerAdmin@hlfv1 --archiveFile my-network.bna
-```
-
-`composer network start` 명령에는 비즈니스 네트워크 카드, 비즈니스 네트워크의 관리자 ID 이름, `.bna` 파일 경로 및 비즈니스 네트워크 카드로 가져올 파일명이 필요합니다. 비즈니스 네트워크를 배포하려면 다음 명령을 실행하십시오:
-```
-composer network start --networkName my-network --networkVersion 0.0.1 --networkAdmin admin --networkAdminEnrollSecret adminpw --card PeerAdmin@hlfv1 --file networkadmin.card
-```
-
-`composer card import` 명령을 사용하려면 `composer network start`에 지정된 파일 이름이 있어야 카드를 만들 수 있습니다. 사용 가능한 비즈니스 네트워크 카드로 네트워크 관리자 ID를 가져 오려면 다음을 실행합니다:
-```
-composer card import --file networkadmin.card
-```
-
-아래와 같이 입력하면 네트워크를 확인할 수 있습니다:
-```
-composer network ping --card admin@my-network
-```
-
-아래와 같은 결과가 나타납니다:
-```
-The connection to the network was successfully tested: my-network
-	version: 0.19.5
-	participant: org.hyperledger.composer.system.Identity#82c679fbcb1541eafeff1bc71edad4f2c980a0e17a5333a6a611124c2addf4ba
-
-
-Command succeeded
-```
-
-배포된 비즈니스 네트워크 (자산/참여자 생성 및 트랜잭션 제출)와 통합하기 위해 컴포저 노드 SDK를 사용하거나 REST API를 생성할 수 있습니다. REST API를 만들려면 composer-rest-server를 시작하고 배포된 비즈니스 네트워크의 접속 정보를 설정합니다. 이제 디렉토리를 프로젝트 작업 디렉토리와 타입으로 변경하고 다음을 입력하여 서버를 시작합니다:
 ```bash
 cd ..
-composer-rest-server
+git clone https://github.com/IBM/global-citizen.git
+mkdir -p global-citizen/credentials
+cp BlockchainNetwork-CompositeJourney/fabric-scripts/hlfv11/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/114aab0e76bf0c78308f89efc4b8c9423e31568da0c340ca187a9b17aa9a4457_sk global-citizen/credentials/admin-priv.pem
+cp BlockchainNetwork-CompositeJourney/fabric-scripts/hlfv11/composer/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem global-citizen/credentials/admin-pub.pem
+cp BlockchainNetwork-CompositeJourney/connection.json global-citizen/connection-profile.json
 ```
-
-시작할 때 나타난 질문들에 답하십시오.  그러면 composer-rest-server를 하이퍼레저 패브릭에 연결하고 REST API의 생성 방법을 설정할 수 있습니다.
-
-* 카드 이름으로 `admin@my-network`를 입력하십시오.
-* 생성된 API에서 네임스페이스 사용 여부를 묻는다면 `never use namespaces`를 선택합니다.
-* 생성된 API의 보안 여부를 묻는다면 `No`를 선택합니다.
-* Passport로 인증 할 것인지 묻는다면 `No`를 선택합니다.
-* 이벤트 게시를 활성화할지 묻는다면 `Yes`를 선택합니다.
-* TLS 보안의 사용 여부를 뭍는다면 `No`를 선택합니다.
-
-만약 composer-rest-server 가 성공적으로 시작되었다면 다음을 확인할 수 있습니다:
-```
-Discovering types from business network definition ...
-Discovered types from business network definition
-Generating schemas for all types in business network definition ...
-Generated schemas for all types in business network definition
-Adding schemas for all types to Loopback ...
-Added schemas for all types to Loopback
-Web server listening at: http://localhost:3000
-Browse your REST API at http://localhost:3000/explorer
-```
-
-웹브라우저를 열어 http://localhost:3000/explorer 로 이동합니다. 
-
-생성된 REST API를 검사하고 테스트할 수 있도록 LoopBack API Explorer가 웹브라우저에서 표시되어야 합니다. 위의 컴포저 섹션에서 나와있는대로 설명을 따라 비즈니스 네트워크 정의를 테스트하십시오.
-
-## 2 단계를 진행하실 준비가 되었습니다! 
-
-축하합니다! 이 시리즈의 1 단계를 완료하셨습니다 - 이제 [2 단계](https://github.com/IBM/BlockchainBalanceTransfer-CompositeJourney)로 이동합니다.
 
 
 ## 추가 리소스
